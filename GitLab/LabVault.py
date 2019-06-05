@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.7.3
+#!/usr/bin/env python3
 # ........................................................................... #
 # (c) 2019, Jacob B. Sanders <development.cloudhybrid@gmail.com>
 # GNU General Public License v3.0: https://opensource.org/licenses/GPL-3.0
@@ -18,6 +18,7 @@ Documentation: https://vaultcipher.com/
   urllib.error.URLError: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1056)>
   Navigate to the Python root directory and open "Install Certificates.command"
 """
+
 import sys
 import time
 import textwrap
@@ -27,20 +28,26 @@ try:
   import gitlab
 except:
   install_check = input("PIP dependency {python-gitlab} is not installed. Correct? (Y/N): ")
-
   if install_check.upper() == "Y":
     command = "pip3 install python-gitlab"
-    stream = subprocess.run(command)
+    stream = subprocess.run(command, shell = True)
+    time.sleep(15)
+    try:
+      import gitlab
+    except: 
+      command = "sudo pip3 install python-gitlab"
+      stream = subprocess.run(command, shell = True)
+      time.sleep(15)
+      import gitlab
 
-    import gitlab
 
 class LabVault(object):
-  def __init__(self, private_access_key: str, gitlab_url: str = "https://gitlab.com"):
-    for iterator in '|/-\\'*3 + "✔": 
+  def __init__(self, private_access_key: str, gitlab_url: str = "https://gitlab.healthcareit.net"):
+    for iterator in '|/-\\' + "✔": 
       sys.stdout.write(f"  ↳ Initializing GitLab Wrappers" + "... " + iterator + "\r")
       sys.stdout.flush()
       time.sleep(0.25)
-    print("\n")
+    print()
 
     self.URL = gitlab_url
     self.API_Key = private_access_key
