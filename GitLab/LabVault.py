@@ -81,19 +81,40 @@ class LabVault(object):
 
   def listDirectories(self):
     """ STDOUT::Prints GitLab Groups, Subgroups, and Projects """ 
+    TAB = "  " + "↳" + " "
+    TAB2 = "  " * 4 
+
+    total_groups = 0
+    total_projects = 0 
+
+    Groups = self.gitlab.groups.list(as_list = True)
+    for Group in Groups:
+      print()
+      print("Group: " + Group.name)
+      print(f"{TAB}Projects: ")
+      total_groups += 1
+      for Project in Group.projects.list(as_list = True):
+        print(f"{TAB2}○ " + Project.name)
+        total_projects += 1
+
+    print()
+    print("Total Groups: " + str(total_groups))
+    print()
+    print("Total Projects: " + str(total_projects))
+    print()
 
     Groups = self.gitlab.groups.list(as_list = True)
 
-    for Group in Groups:
-      print("  Group:")
-      print("    " + self.characters["Bullet"] + " " + Group.name)
-      subgroups = Group.subgroups.list(as_list = True)
-      if subgroups:
-        for Subgroup in subgroups:
-          print("    " + "Subgroups: ")
-          print("      " + Subgroup.name)
-      else:
-        pass
+    # for Group in Groups:
+    #   print("  Group:")
+    #   print("    " + self.characters["Bullet"] + " " + Group.name)
+    #   subgroups = Group.subgroups.list(as_list = True)
+    #   if subgroups:
+    #     for Subgroup in subgroups:
+    #       print("    " + "Subgroups: ")
+    #       print("      " + Subgroup.name)
+    #   else:
+    #     pass
 
   def cloneRepositories(self):
     pass
