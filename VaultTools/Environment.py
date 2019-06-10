@@ -66,6 +66,21 @@ class Environment(object):
     return property
 
   @property
+  def MacOSHomeDirectory(self):
+    property = f"/Users/{self.USERNAME}/"
+    return property
+
+  @property
+  def LinuxHomeDirectory(self):
+    property = f"/Users/{self.USERNAME}/"
+    return property
+
+  @property
+  def WindowsHomeDirectory(self):
+    property = f"C:\\Users\\{self.USERNAME}\\"
+    return property
+
+  @property
   def WindowsRSAKey(self):
     property = f"C:\\Users\\{self.USERNAME}\\.ssh\\id_rsa.pub"
     return property

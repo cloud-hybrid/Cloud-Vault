@@ -15,7 +15,8 @@ brew install envchain
   - __Note__: [brew](#Brew-Setup) is required for installation.
 2. Save a ```CloudVault-GitLab-Token``` as an envchain object.
 ```
-envchain --set --noecho --require-passphrase CloudVault CLOUDVAULT_API_TOKEN
+envchain --set --noecho --require-passphrase Vault VAULT_LAB_API_TOKEN
+LYy79BxGg6Z18_GybBkD
 ```
   - __Note__: A [GitLab Access Key](#Brew-Setup) is required for setup.
 

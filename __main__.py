@@ -39,14 +39,15 @@ def main(argv):
 import os
 import sys
 
-from CloudVault.VaultTools.Environment import Environment
-from CloudVault.GitLab.LabVault import LabVault
+from Vault.VaultTools.Environment import Environment
+from Vault.GitLab.LabVault import LabVault
 
 def main(argv):
-  private_key = os.environ["GITLAB_API_TOKEN"]
+  private_key = os.environ["VAULT_LAB_API_TOKEN"]
 
   GitLab = LabVault(private_key)
-  GitLab.listDirectories()
+  # GitLab.printRepositories()
+  GitLab.cloneAllRepositories()
 
 if __name__ == "__main__":
   main(sys.argv)
