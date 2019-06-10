@@ -15,12 +15,27 @@ DOCUMENTATION = """
 Module: N/A
 Author: Jacob B. Sanders (@cloud-hybrid)
 Summary: The entry point for the program.
-Description: 
+Description:
 
 Dependencies:
 - python-gitlab (PIP3)
 - brew
 - envchain (brew)
+
+@Development:
+- Create a scanEmptyDirectories function in GitLab.py.
+  - Have it get the following information:
+    - Group Name
+    - URL
+    - Last Edit
+    - Owners
+    - Owner-Email
+
+- Change the current method of capitializing Group/Project
+  names to a better method where - and _ aren't being 
+  replaced with spaces. Only capitalize the letters if
+  seperated with " ", _, -.
+  - Capitalize Projects. 
 """
 
 EXAMPLES = """
@@ -43,9 +58,9 @@ from Vault.VaultTools.Environment import Environment
 from Vault.GitLab.LabVault import LabVault
 
 def main(argv):
-  private_key = os.environ["VAULT_LAB_API_TOKEN"]
+  private_key = os.environ["GITLAB_API_TOKEN"]
 
-  GitLab = LabVault(private_key)
+  GitLab = LabVault(private_access_key = private_key, gitlab_url = "https://gitlab.healthcareit.net")
   # GitLab.printRepositories()
   GitLab.cloneAllRepositories()
 

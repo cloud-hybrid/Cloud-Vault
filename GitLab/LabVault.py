@@ -68,31 +68,32 @@ class LabVault(object):
 
     print()
 
-    self.gitlab = gitlab.Gitlab(self.URL, private_token = self.API_Key, http_username = self.https_username, http_password = self.https_password)
+    #self.gitlab = gitlab.Gitlab(self.URL, private_token = self.API_Key, http_username = self.https_username, http_password = self.https_password)
+    self.gitlab = gitlab.Gitlab(self.URL, private_token = self.API_Key)
 
     self.progress = False
 
-  def createConfiguration(self):
-    """ Creates a default gitlab configuration file used by python-gitlab. """ 
-    # Note: Need to find the .cfg file location and name, and open and write
-    # to it
+  # def createConfiguration(self):
+  #   """ Creates a default gitlab configuration file used by python-gitlab. """ 
+  #   # Note: Need to find the .cfg file location and name, and open and write
+  #   # to it
 
-    template = textwrap.dedent(
-      f"""
-      [global]
-      default = gitLab
-      ssl_verify = true
-      timeout = 15
+  #   template = textwrap.dedent(
+  #     f"""
+  #     [global]
+  #     default = gitLab
+  #     ssl_verify = true
+  #     timeout = 15
 
-      [gitLab]
-      url = {self.URL}
-      private_token = {self.API_Key}
-      api_version = 4
-      """
-    ).strip()
+  #     [gitLab]
+  #     url = {self.URL}
+  #     private_token = {self.API_Key}
+  #     api_version = 4
+  #     """
+  #   ).strip()
 
-    configuration = template
-    return configuration
+  #   configuration = template
+  #   return configuration
 
   def printRepositories(self, order_type = "path"):
     """ STDOUT::Prints GitLab Groups, Subgroups, and Projects """ 
@@ -112,7 +113,7 @@ class LabVault(object):
     TAB = " " * 2
 
     if directory == None:
-      default = input("Targeted Clone Directory: NULL. Use $HOME Directory? (Y/N): ")
+      default = input("Clone To Default Directory? (Y/N/?): ")
       if default.upper() == "N":
         directory = input("Path: ")
         if not os.path.exists(directory):
@@ -126,6 +127,9 @@ class LabVault(object):
           directory = Environment().WindowsHomeDirectory
         else:
           sys.exit("Error: Unsupported Operating System")
+      elif default == "?":
+        print("  ↳ Default: ~/Vault\ Gitlab" + "\n")
+        self.cloneAllRepositories()
       else:
         sys.exit("Unknown Input")
     else:
@@ -219,7 +223,6 @@ class LabVault(object):
           projects_cloned += 1
 
   def createGitlabDirectory(self, path):
-    time.sleep(2.5)
     os.makedirs(path)
     time.sleep(2.5)
 
