@@ -36,10 +36,11 @@ Dependencies:
   replaced with spaces. Only capitalize the letters if
   seperated with " ", _, -.
   - Capitalize Projects. 
+
+- Move private_key from __main__ to GitLab.py
 """
 
 EXAMPLES = """
-::Print Public Key
 def main(argv):
   project = GitProject()
   print(project.Key)
@@ -54,15 +55,18 @@ def main(argv):
 import os
 import sys
 
-from Vault.VaultTools.Environment import Environment
+from Vault.Tools.Environment import Environment
 from Vault.GitLab.LabVault import LabVault
+from Vault.GitLab.Server import Server
 
 def main(argv):
-  private_key = os.environ["GITLAB_API_TOKEN"]
+  # private_key = os.environ["GITLAB_API_TOKEN"]
 
-  GitLab = LabVault(private_access_key = private_key, gitlab_url = "https://gitlab.healthcareit.net")
+  # GitLab = LabVault(private_access_key = private_key, gitlab_url = "https://gitlab.healthcareit.net")
   # GitLab.printRepositories()
-  GitLab.cloneAllRepositories()
+  # GitLab.cloneAllRepositories()
+
+  GitLabServer = Server()
 
 if __name__ == "__main__":
   main(sys.argv)

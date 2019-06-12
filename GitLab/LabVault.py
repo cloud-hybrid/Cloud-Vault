@@ -28,8 +28,8 @@ import subprocess
 import getpass
 import concurrent.futures as ThreadPool
 
-from Vault.VaultTools.Environment import Environment
-from Vault.VaultTools.Illustrate import Illustrate
+from Vault.Tools.Environment import Environment
+from Vault.Tools.ASCII import ASCII  
 
 try:
   import gitlab
@@ -64,7 +64,7 @@ class LabVault(object):
     self.URL = gitlab_url
     self.API_Key = private_access_key
     self.https_username = input("Gitlab Username: ")
-    self.https_password = getpass.getpass(prompt = "  " + Illustrate().characters["Arrow-Down-Right"] + " " + "Password: ")
+    self.https_password = getpass.getpass(prompt = "  " + ASCII().characters["Arrow-Down-Right"] + " " + "Password: ")
 
     print()
 
@@ -72,28 +72,6 @@ class LabVault(object):
     self.gitlab = gitlab.Gitlab(self.URL, private_token = self.API_Key)
 
     self.progress = False
-
-  # def createConfiguration(self):
-  #   """ Creates a default gitlab configuration file used by python-gitlab. """ 
-  #   # Note: Need to find the .cfg file location and name, and open and write
-  #   # to it
-
-  #   template = textwrap.dedent(
-  #     f"""
-  #     [global]
-  #     default = gitLab
-  #     ssl_verify = true
-  #     timeout = 15
-
-  #     [gitLab]
-  #     url = {self.URL}
-  #     private_token = {self.API_Key}
-  #     api_version = 4
-  #     """
-  #   ).strip()
-
-  #   configuration = template
-  #   return configuration
 
   def printRepositories(self, order_type = "path"):
     """ STDOUT::Prints GitLab Groups, Subgroups, and Projects """ 
@@ -243,4 +221,4 @@ class HyperThread(threading.Thread):
         sys.stdout.write(f"  ↳ {self.statement}" + "... " + iterator + "\r")
         time.sleep(0.25)
         sys.stdout.flush()
-    sys.stdout.write(f"  ↳ {self.statement}" + "... " + Illustrate().characters["Success"] + "\n")
+    sys.stdout.write(f"  ↳ {self.statement}" + "... " + ASCII().characters["Success"] + "\n")

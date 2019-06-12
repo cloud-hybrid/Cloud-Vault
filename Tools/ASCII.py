@@ -4,13 +4,15 @@
 # GNU General Public License v3.0: https://opensource.org/licenses/GPL-3.0
 
 DOCUMENTATION = """
-Module: Illustrate
+Module: ASCII
 Author: Jacob B. Sanders (@cloud-hybrid)
 Summary: Helper module for drawing and displaying progress.
 Documentation: 
 """
 
-class Illustrate(object):
+import json
+
+class ASCII(object):
   @property
   def characters(self):
     property = {
@@ -25,6 +27,10 @@ class Illustrate(object):
       "Progress-Full" : "█"
     }
     return property
+
+  @property
+  def AWSConfigurationProfile(self):
+    pass
 
   def __init__(self):
     pass
