@@ -45,9 +45,17 @@ class AWSBaseObject(object):
     status = False
     return status
 
-  def __init__(self):
+  def __init__(self, environment = None):
     Progress.run("Performing AWS Configuration Checks")
-    self.validateConfiguration()
+    self.aws_configuration = self.validateConfiguration()
+    self.aws_credentials = self.validateCredentials()
+
+    self.aws_variables = {**self.aws_configuration, **self.aws_credentials}
+
+    if environment == None:
+      self.aws_environment = self.aws_variables["Environment-Default"]
+    else:
+      self.aws_environment = self.aws_variables[f"Environment-{environment}"]
 
   def validateConfiguration(self):
     if os.path.isfile(f"/Users/{Environment().USERNAME}/.aws/config") == False:
@@ -71,34 +79,76 @@ class AWSBaseObject(object):
         aws_variables = dict()
         for index in line_list:
           if "[" in index and "]" in index and "#" not in index:
-            aws_variables["Environment"] = index.replace("[", "").replace("]", "")
+            aws_variables["Environment-" + str(index).title().replace("[", "").replace("]", "")] = index
+          elif "#" in index:
+            pass
           else:
             line_split = index.split()
-            key = line_split[0]
-            value = index.replace(key, "").replace(" = ", "").replace("=", "")
-            aws_variables[key] = value
-        
-        if aws_variables["output"] != "json" or not aws_variables["output"]:
-          print("Validation Failed: Incompatible Output.")
-          sys.exit("  ↳ Please reconfigure AWS output to {json}.")
-        else:
-          if self.validateEndPoints():
-            print("Validation was Successful.")
+            if len(line_split) > 0:
+              key = line_split[0]
+              value = index.replace(key, "").replace(" = ", "").replace("=", "")
+              aws_variables[key] = value
+
+        if aws_variables["output"]:
+          if aws_variables["output"] != "json":
+            print("Validation Failed: Incompatible Output.")
+            sys.exit("  ↳ Please reconfigure AWS output to {json}.")
           else:
-            print("Validation Failed: Region Error.")
-            sys.exit("  ↳ Invalid region(s) entry. Correct entry example: {us-east-1}.")         
+            print("Configuration Validation was Successful." + "\n")
+            return aws_variables
+        else:
+          print("Validation Failed: Default output N/A.")
+          correct = input("  ↳ Correct? (Y/N): ")
+          if correct.upper() == "Y":
+            with open(f"/Users/{Environment().USERNAME}/.aws/config", "a") as configuration:
+              configuration.write("output = json")
+            configuration.close()
+            Progress.run("Updating Configuration File")
+            self.validateConfiguration()
+          else:
+            sys.exit("  ↳ Please add output = json in ~/.aws/config")
 
-  def validateEndPoints(self):
-    command = "aws iam get-user"
-    stream = subprocess.Popen(
-      shlex.split(command),
-      stdout = subprocess.PIPE,
-      stderr = subprocess.PIPE,
-      universal_newlines = True
-    )
-
-    output = str(stream.communicate(timeout = 15)[1])
-    if "Invalid endpoint" in output:
-      return False
+  def validateCredentials(self):
+    if os.path.isfile(f"/Users/{Environment().USERNAME}/.aws/credentials") == False:
+      configure_setup = input("AWS credentials do not exist. Execute setup? (Y/N): ")
+      if configure_setup.upper() == "Y":
+        time.sleep(0.25)
+        print()
+        command = "aws configure"
+        subprocess.run(shlex.split(command))
+      elif configure_setup.upper() == "N":
+        sys.exit("  ↳ AWS Error: awscli is not configured.")
+      else:
+        sys.exit("  ↳ Input Error: Unknown Input.")
     else:
-      return True
+      print("Validating Credentials File: ")
+      Progress.run("Loading")
+      with open(f"/Users/{Environment().USERNAME}/.aws/credentials", "r") as credentials:
+        line_list = [line.rstrip('\n') for line in credentials]
+        aws_variables = dict()
+        env_variables = dict()
+        env_key = None
+        for index in line_list:
+          if "[" in index and "]" in index and "#" not in index:
+            env_key = "Environment-" + str(index).title().replace("[", "").replace("]", "")
+            env_variables[env_key] = {"Environment" : index}
+          elif "#" in index:
+            pass
+          else:
+            line_split = index.split()
+            if len(line_split) > 0:
+              if line_split[0] == "aws_access_key_id":
+                key = line_split[0]
+                value = index.replace(key, "").replace(" = ", "").replace("=", "")
+                env_variables[env_key].update({key : value})
+                aws_variables = {**aws_variables, **env_variables}
+              elif line_split[0] == "aws_secret_access_key":
+                key = line_split[0]
+                value = index.replace(key, "").replace(" = ", "").replace("=", "")
+                env_variables[env_key].update({key : value})
+                aws_variables = {**aws_variables, **env_variables}
+
+      Progress.run("Reading Environment and Credential Variables")
+      print("Credential Validation was Successful." + "\n")
+      time.sleep(0.5)
+      return aws_variables
