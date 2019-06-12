@@ -57,7 +57,7 @@ import sys
 
 from Vault.Tools.Environment import Environment
 from Vault.GitLab.LabVault import LabVault
-from Vault.GitLab.Server import Server
+from Vault.IaaS.AWS.AWSBaseObject import AWSBaseObject
 
 def main(argv):
   # private_key = os.environ["GITLAB_API_TOKEN"]
@@ -66,7 +66,7 @@ def main(argv):
   # GitLab.printRepositories()
   # GitLab.cloneAllRepositories()
 
-  GitLabServer = Server()
+  GitLabServer = AWSBaseObject()
 
 if __name__ == "__main__":
   main(sys.argv)
